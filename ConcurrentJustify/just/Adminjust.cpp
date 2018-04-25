@@ -17,7 +17,6 @@ int AdminJust::run( std::string listOfFiles[], int numberOfFiles ,short identati
 {
     Justify justIndividual;
     Reserv local;
-    int i = 12;
 
     for ( int index = 0; index < numberOfFiles; ++ index )
     {
@@ -25,18 +24,10 @@ int AdminJust::run( std::string listOfFiles[], int numberOfFiles ,short identati
         {
             justIndividual.run( index + 1, messageControl, listOfFiles [ index ], listOfFiles [ index ] , identationSize );
             _exit(0);
-        }else
-        {
-            wait(&i);
         }
     }
 
-    std::cout<<"soy papa de todos "<< i <<" \n";
-    Reserv tem;
-    messageControl.Recibir( tem, 1);
-    std::cout<< tem.p<< " tipo: "<<tem.c <<"\n";
-    messageControl.Recibir( tem, 1);
-    std::cout<< tem.p<< " tipo: "<<tem.c <<"\n";
+    std::cout<<"soy papa de todos "<<"\n";
 
     return 0;
 }

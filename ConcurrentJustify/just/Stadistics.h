@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <vector>
 #include <string>
+#include <map>
 #include "File.h"
 #include <sstream>
 #include "Buzon.h"
@@ -18,7 +19,13 @@ private:
 
 public:
     std::vector<std::string> reservedWordsVector;
-    std::vector<std::string> stadisticsResult;
+    std::map<std::string,short> finder;
+    struct counter
+    {
+      short amount;
+      char word[32];
+
+    };
 
     Stadistics();
     ~Stadistics();

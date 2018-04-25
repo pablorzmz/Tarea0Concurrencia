@@ -4,7 +4,7 @@
 Stadistics::Stadistics()
     :stats()
     ,reservedWordsVector()
-    ,stadisticsResult()
+    ,finder()
 {
     this->fillWords();
 }
@@ -19,18 +19,20 @@ void Stadistics::fillWords()
     File reader;
     std::string fileName =  PALABRAS_RESERVADAS;
     reader.readFile( this->reservedWordsVector, fileName );
+    for (size_t index = 0; index < this->reservedWordsVector.size(); ++index )
+    {
+        finder.insert(std::pair<std::string,int>(reservedWordsVector[index],0) );
+    }
+
+
 }
 
 
 void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std::vector<std::string>& lines , const std::string &originalFileName )
 {    
     Reserv mensajeLocal;
-    strncpy( mensajeLocal.p, "Ya terminé", TAM );
-    mensajeLocal.c =typeX;
 
-    size_t reservedWordsSize = this->reservedWordsVector.size();
     size_t lineFromFile = lines.size();
-    short counter[ reservedWordsSize ];
 
     size_t amountChars = 9;
     size_t startPos = 0;
@@ -40,13 +42,6 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
     std::string copiedLine = "";
     std::string wordTokens = "";
     Util utilities;
-
-
-    //Llenamos el arry dinamico con las palabras
-    for ( size_t index = 0; index < reservedWordsSize; ++index )
-    {
-        counter[index] = 0;
-    }
 
     // contamos cuantas palabras reservadas hay
     for ( size_t index = 0; index < lineFromFile;++index )
@@ -71,14 +66,8 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
             std :: istringstream tokens (copiedLine);
             while ( tokens >> wordTokens )
             {
-                for ( size_t subIndex2 = 0; subIndex2 < reservedWordsSize; ++subIndex2 )
-                {
-                    if ( wordTokens == reservedWordsVector.at( subIndex2 ) )
-                    {
-                        ++counter [ subIndex2 ];
-                        buz.Enviar( mensajeLocal, typeX );
-                    }
-                }
+                std::map<std::string, short>::iterator iter =  finder.find(wordTokens);
+
             }
         }
     }

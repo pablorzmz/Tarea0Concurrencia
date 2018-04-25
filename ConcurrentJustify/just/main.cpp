@@ -26,7 +26,7 @@ int analizeArgs(int argc, char *argv[] )
     AdminJust admJust;
     short size = 3;
     std::string s[size];
-    int identationSize = 3;
+    int identationSize = 0;
 
     s[0] = "solution1.cpp";
     s[1] = "solution2.cpp";
