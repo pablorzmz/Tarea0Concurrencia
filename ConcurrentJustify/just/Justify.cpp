@@ -32,7 +32,7 @@ int Justify::run(const long& typeX ,Buzon& buz, const std::string &codeFileName,
     // por último, se realiza la identación
     this->ident();
     // antes de finalizar se contruyen la estadisticas de la frecuencia de la palabras reservadas
-    st.generateStadistics( buz, typeX, this->readLinesFromFile,codeFileName.empty()?DEFAULT_NAME:codeFileName );
+    st.generateStadistics( buz, typeX, this->readLinesFromFile );
     // finalmente, se crear o reemplaza el nuevo archivo.
     codeFile.writeFile( this->readLinesFromFile, justifiedFileName, EXTENTION );
     return 0;

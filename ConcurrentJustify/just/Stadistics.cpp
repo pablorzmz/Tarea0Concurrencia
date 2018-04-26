@@ -1,10 +1,7 @@
 #include "Stadistics.h"
 
-#define PALABRAS_RESERVADAS "reserved_words.txt"
 Stadistics::Stadistics()
-    :stats()
-    ,reservedWordsVector()
-    ,finder()
+    :finder()
 {
     this->fillWords();
 }
@@ -16,19 +13,105 @@ Stadistics::~Stadistics()
 
 void Stadistics::fillWords()
 {
-    File reader;
-    std::string fileName =  PALABRAS_RESERVADAS;
-    reader.readFile( this->reservedWordsVector, fileName );
-    for (size_t index = 0; index < this->reservedWordsVector.size(); ++index )
+    std::string reservedWordsVector[] =
+    {
+        "alignas",
+        "alignof",
+        "and",
+        "and_eq",
+        "asm",
+        "auto",
+        "bitand",
+        "bitor",
+        "bool",
+        "break",
+        "case",
+        "catch",
+        "char",
+        "char16_t",
+        "char32_t",
+        "class",
+        "compl",
+        "const",
+        "constexpr",
+        "const_cast",
+        "continue",
+        "decltype",
+        "default",
+        "delete",
+        "do",
+        "double",
+        "dynamic_cast",
+        "else",
+        "enum",
+        "explicit",
+        "export",
+        "extern",
+        "false",
+        "float",
+        "for",
+        "friend",
+        "goto",
+        "if",
+        "inline",
+        "int",
+        "long",
+        "mutable",
+        "namespace",
+        "new",
+        "noexcept",
+        "not",
+        "not_eq",
+        "nullptr",
+        "operator",
+        "or",
+        "or_eq",
+        "private",
+        "protected",
+        "public",
+        "register",
+        "reinterpret_cast",
+        "return",
+        "short",
+        "signed",
+        "sizeof",
+        "size_t",
+        "static",
+        "static_assert",
+        "static_cast",
+        "std",
+        "struct",
+        "switch",
+        "template",
+        "this",
+        "thread_local",
+        "throw",
+        "true",
+        "try",
+        "typedef",
+        "typeid",
+        "typename",
+        "union",
+        "unsigned",
+        "using",
+        "virtual",
+        "void",
+        "volatile",
+        "wchar_t",
+        "while",
+        "xor",
+        "xor_eq",
+    };
+
+    for (size_t index = 0; index <  AMOUNT_OF_WORDS; ++index )
     {
         finder.insert(std::pair<std::string,int>(reservedWordsVector[index],0) );
     }
 
-
 }
 
 
-void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std::vector<std::string>& lines , const std::string &originalFileName )
+void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std::vector<std::string>& lines )
 {    
     Reserv mensajeLocal;
 
@@ -66,10 +149,23 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
             std :: istringstream tokens (copiedLine);
             while ( tokens >> wordTokens )
             {
+                // se busca la palabra y aumenta el contador
                 std::map<std::string, short>::iterator iter =  finder.find(wordTokens);
-
+                if ( iter != finder.end() )
+                    iter->second +=1;
             }
         }
     }
+
+    // se envian los mensajes por cada palabra
+    std::cout <<"\t\tsoy el hijo "<<typeX<<std::endl;
+
+    for ( std::map<std::string,short>::iterator iter = finder.begin(); iter != finder.end(); ++iter )
+    {
+        strncpy( mensajeLocal.p, iter->first.c_str(),TAM);
+        mensajeLocal.count = iter-> second;
+        buz.Enviar( mensajeLocal, typeX );
+    }
+    std::cout <<"\t\tsoy el hijo "<<typeX<<std::endl;
 
 }

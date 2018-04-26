@@ -8,7 +8,9 @@ class Reserv
 public:
     Reserv();
     char p[TAM];
-    short c;
+    short count;
+    bool failOperations;
+    bool endOperations;
 };
 
 #endif // RESERV_H

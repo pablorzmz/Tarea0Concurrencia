@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "File.h"
 #include <sstream>
 #include "Buzon.h"
 #include "Util.h"
@@ -14,23 +13,14 @@
 
 class Stadistics
 {        
-private:
-    File stats;
-
 public:
-    std::vector<std::string> reservedWordsVector;
     std::map<std::string,short> finder;
-    struct counter
-    {
-      short amount;
-      char word[32];
-
-    };
+    const static short AMOUNT_OF_WORDS = 86;
 
     Stadistics();
     ~Stadistics();
     void fillWords();
-    void generateStadistics(Buzon &buz, const long &typeX, const std::vector<std::string>& lines , const std::string &originalFileName);
+    void generateStadistics(Buzon &buz, const long &typeX, const std::vector<std::string>& lines );
 };
 
 #endif // STADISTICS_H

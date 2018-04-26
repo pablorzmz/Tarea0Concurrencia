@@ -1,6 +1,8 @@
 #ifndef ADMINJUST_H
 #define ADMINJUST_H
 
+
+
 #include "Buzon.h"
 #include "Justify.h"
 #include "Semaforo.h"
