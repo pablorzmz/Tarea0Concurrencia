@@ -26,7 +26,7 @@ Buzon::~Buzon()
     }
 }
 
-int Buzon::Enviar( Reserv content, int tipo )
+int Buzon::Send( Reserv content, int tipo )
 {    
     msgbuf mensajeNuevo; // se crea un nuevo objeto del tipo msgbuf, que estructura un mensaje
     mensajeNuevo.mtype = tipo; // la prioridad de los mensajes, en este buzón, siempre va a ser de 1
@@ -45,7 +45,7 @@ int Buzon::Enviar( Reserv content, int tipo )
 }
 
 
-int Buzon::Recibir(Reserv &content, int tipo)
+int Buzon::Receive(Reserv &content, int tipo)
 {
      msgbuf mensajeRecibido; // estructura vacía para recibir el mensaje
 

@@ -158,14 +158,12 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
     }
 
     // se envian los mensajes por cada palabra
-    std::cout <<"\t\tsoy el hijo "<<typeX<<std::endl;
 
     for ( std::map<std::string,short>::iterator iter = finder.begin(); iter != finder.end(); ++iter )
     {
         strncpy( mensajeLocal.p, iter->first.c_str(),TAM);
         mensajeLocal.count = iter-> second;
-        buz.Enviar( mensajeLocal, typeX );
+        buz.Send( mensajeLocal, typeX );
     }
-    std::cout <<"\t\tsoy el hijo "<<typeX<<std::endl;
 
 }
