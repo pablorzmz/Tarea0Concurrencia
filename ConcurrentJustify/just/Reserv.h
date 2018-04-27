@@ -3,10 +3,10 @@
 
 #define TAM 32
 
-class Reserv
+class Reserve
 {
 public:
-    Reserv();
+    Reserve();
     char p[TAM];
     short count;
     bool failOperations;

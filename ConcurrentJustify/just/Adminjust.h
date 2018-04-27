@@ -18,7 +18,7 @@ class AdminJust
     struct sharedMemStruct
     {
         int nCurrentTotals;
-        Reserv r[ Stadistics::AMOUNT_OF_WORDS ];
+        Reserve r[ Stadistics::AMOUNT_OF_WORDS ];
         sharedMemStruct()
             :nCurrentTotals(0)
             ,r()
@@ -35,7 +35,11 @@ private:
     Buzon messageControl;
     Semaforo semProcesses;    
     sharedMemStruct* attachedSharedMem;
+    Justify individualJust;
     int initSharedMem();
+    void printStadisticsFromFile(const char* alphchars, const short* wordsPerChar, const size_t amountOfLetters );
+    void fillMessagesVector(Reserve childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t& childIndex, size_t& recordAllWords,  int& numberOfFiles );
+    void updateSharedMemory(int & lastPointerToWords, Reserve childMessages[][Stadistics::AMOUNT_OF_WORDS], const short wordsPerChar[], size_t & currentLetterIndex, const  int& numberOfFiles);
 
 };
 

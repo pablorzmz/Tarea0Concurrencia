@@ -1,6 +1,6 @@
 #include "Reserv.h"
 
-Reserv::Reserv()
+Reserve::Reserve()
     :p{ "\0" }
     ,count( 0 )
     ,failOperations( false )

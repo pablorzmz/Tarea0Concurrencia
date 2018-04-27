@@ -113,7 +113,7 @@ void Stadistics::fillWords()
 
 void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std::vector<std::string>& lines )
 {    
-    Reserv mensajeLocal;
+    Reserve mensajeLocal;
 
     size_t lineFromFile = lines.size();
 
