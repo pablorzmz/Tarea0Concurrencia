@@ -1,10 +1,10 @@
 #include "Reserv.h"
 
-Reserve::Reserve()
+Reserved::Reserved()
     :p{ "\0" }
     ,count( 0 )
-    ,failOperations( false )
-    ,endOperations( false )
+    ,endOperations ( false )
+    ,isAnErrorMessage ( false )
 {
 
 }

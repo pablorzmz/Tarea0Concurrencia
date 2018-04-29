@@ -2,15 +2,17 @@
 #define RESERV_H
 
 #define TAM 32
+#define VECTORSIZE 100
 
-class Reserve
+class Reserved
 {
+
 public:
-    Reserve();
+    Reserved();
     char p[TAM];
     short count;
-    bool failOperations;
     bool endOperations;
+    bool isAnErrorMessage;
 };
 
 #endif // RESERV_H

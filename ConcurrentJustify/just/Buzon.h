@@ -18,14 +18,15 @@ class Buzon {
 public:
    Buzon();
    ~Buzon();
-   int Send(Reserve content, int tipo);
-   int Receive(Reserve &content, int tipo );   // len es el tamaño máximo que soporte la variable mensaje
+   int Send(Reserved content, int tipo);
+   int Receive(Reserved &content, int tipo, int flag = 0 );   // len es el tamaño máximo que soporte la variable mensaje
   private:
    int id;		// Identificador del buzon
+   // structura que identifica el tippo de mensaje y que es un mensaje como tal
    struct msgbuf
    {
        long mtype;
-       Reserve messageContent;
+       Reserved messageContent;
    };
 };
 

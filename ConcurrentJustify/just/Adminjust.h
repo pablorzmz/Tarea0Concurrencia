@@ -3,6 +3,7 @@
 
 #define KEY3 0xB65700
 
+
 #include "Buzon.h"
 #include "Justify.h"
 #include "Semaforo.h"
@@ -18,7 +19,7 @@ class AdminJust
     struct sharedMemStruct
     {
         int nCurrentTotals;
-        Reserve r[ Stadistics::AMOUNT_OF_WORDS ];
+        Reserved r[ Stadistics::AMOUNT_OF_WORDS ];
         sharedMemStruct()
             :nCurrentTotals(0)
             ,r()
@@ -29,7 +30,7 @@ class AdminJust
 public:
     AdminJust();
     ~AdminJust();
-    int run(std::string listOfFiles[], int numberOfFiles, short identationSize);
+    int run(std::vector<std::string> listOfFiles, int numberOfFiles, size_t identationSize);
     int idSharedMem;
 private:
     Buzon messageControl;
@@ -38,8 +39,8 @@ private:
     Justify individualJust;
     int initSharedMem();
     void printStadisticsFromFile(const char* alphchars, const short* wordsPerChar, const size_t amountOfLetters );
-    void fillMessagesVector(Reserve childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t& childIndex, size_t& recordAllWords,  int& numberOfFiles );
-    void updateSharedMemory(int & lastPointerToWords, Reserve childMessages[][Stadistics::AMOUNT_OF_WORDS], const short wordsPerChar[], size_t & currentLetterIndex, const  int& numberOfFiles);
+    void fillMessagesVector(Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t& childIndex, size_t& recordAllWords,  int& numberOfFiles );
+    void updateSharedMemory(int & lastPointerToWords, Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], const short wordsPerChar[], size_t & currentLetterIndex, const  int& numberOfFiles);
 
 };
 

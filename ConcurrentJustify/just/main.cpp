@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+
 #include "Adminjust.h"
 
 using namespace std;
@@ -6,32 +8,53 @@ using namespace std;
 const std::string help =
 "--help                                     Shows commands information for execution\n"
 "\n"
-"[-e n] [-i input_file] [-o output_file]        When command -e is specified, atribute n (most be positive) is waited. If it is skiped,\n"
-"                                           default value of 4 is used. Command -i instroduces input_file name, and it is waited. When\n"
-"                                           this command is skiped, standard input is used and the name for the stadistics´s file will\n"
-"                                           be standarInput.Command -o instroduces output_file name, and it is waited. When this command\n"
-"                                           is skiped, standard output is used. Also the program runs with changed input (<) and ouput\n"
-"                                           files(>).\n";
+"[-e n] input_file_1 input_file_2 input_file_N "
+"                                           "
+"                                           When command -e is specified, atribute n (most be positive) is waited. If it is skiped,\n"
+"                                           default value of 4 is used. Then, the program reads the list of Code file's names to justify.";
 
 int analizeArgs( int argc, char *argv[] );
 
 int main( int argc, char *argv[] )
 {
-
     return analizeArgs( argc , argv );
 }
 
 int analizeArgs(int argc, char *argv[] )
 {
     AdminJust admJust;
-    short size = 3;
-    std::string s[size];
-    int identationSize = 3;
+    std::string param;
+    std::vector<std::string> lisfOFiles;
+    int identationSize = 4;
 
-    s[0] = "solution1.cpp";
-    s[1] = "solution2.cpp";
-    s[2] = "solution3.cpp";
+    for (int currentParam = 1; currentParam < argc; ++ currentParam )
+    {
+        param = argv [currentParam ];
+        if ( param == "-e" )
+        {
+            ++ currentParam;
+            if (currentParam < argc )
+            {
+                param =  argv [ currentParam ];
+                identationSize = std::stoi( param );
 
-    return admJust.run( s, size, identationSize );
+                if ( identationSize < 0 )
+                {
+                    std::cerr<<"Se espera que el tamaño de identación sea positivo y entero";
+                    exit(1);
+                }
+            }
+            else
+            {
+                std::cerr<<"Se espera el tamaño de identación luego del comando -e\n";
+                exit(1);
+            }
+        }else
+        {
+            lisfOFiles.push_back( param );
+        }
+    }
+
+    return admJust.run( lisfOFiles, lisfOFiles.size(), identationSize );
 }
 

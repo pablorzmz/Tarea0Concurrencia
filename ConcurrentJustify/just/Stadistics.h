@@ -1,6 +1,8 @@
 #ifndef STADISTICS_H
 #define STADISTICS_H
 
+#define ENDTYPEOP 703
+
 #include <ctype.h>
 #include <vector>
 #include <string>

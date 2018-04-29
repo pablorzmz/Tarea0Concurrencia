@@ -113,17 +113,16 @@ void Stadistics::fillWords()
 
 void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std::vector<std::string>& lines )
 {    
-    Reserve mensajeLocal;
+    Reserved localMessage;
 
     size_t lineFromFile = lines.size();
-
     size_t amountChars = 9;
     size_t startPos = 0;
 
     std::string sintaxChars[amountChars] = {";",":", "&", "(", ")",",","<",">","-"};
-
     std::string copiedLine = "";
     std::string wordTokens = "";
+
     Util utilities;
 
     // contamos cuantas palabras reservadas hay
@@ -138,7 +137,7 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
             // separamos las palabras reservadas que pudieron quedar "pegadas a otros caracteres"
             for ( size_t subIndex = 0; subIndex < amountChars; ++subIndex )
             {
-                startPos = copiedLine.find_first_of( sintaxChars [subIndex] );
+                startPos = copiedLine.find_first_of( sintaxChars [ subIndex ] );
                 while ( startPos != std::string::npos )
                 {
                     copiedLine.replace( startPos, sintaxChars[ subIndex ].length()," "+sintaxChars[ subIndex ]+" ");
@@ -150,7 +149,7 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
             while ( tokens >> wordTokens )
             {
                 // se busca la palabra y aumenta el contador
-                std::map<std::string, short>::iterator iter =  finder.find(wordTokens);
+                std::map<std::string, short>::iterator iter =  finder.find( wordTokens );
                 if ( iter != finder.end() )
                     iter->second +=1;
             }
@@ -158,12 +157,20 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
     }
 
     // se envian los mensajes por cada palabra
-
+//    int currentPos = 0;
     for ( std::map<std::string,short>::iterator iter = finder.begin(); iter != finder.end(); ++iter )
     {
-        strncpy( mensajeLocal.p, iter->first.c_str(),TAM);
-        mensajeLocal.count = iter-> second;
-        buz.Send( mensajeLocal, typeX );
+        strncpy( localMessage.p, iter->first.c_str(),TAM);
+        localMessage.count = iter-> second;
+        buz.Send( localMessage, typeX );
     }
 
+    // se notifica por mensaje cuando ya terminé de ejecutarme
+
+       std::string result = "Succefull_FinishedChild: " + std::to_string( typeX );
+       strcpy ( localMessage.p, result.c_str() ) ;
+       localMessage.count = -1;
+       localMessage.endOperations = true;
+
+       buz.Send( localMessage, ENDTYPEOP );
 }
