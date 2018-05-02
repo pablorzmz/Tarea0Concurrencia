@@ -9,7 +9,7 @@ class Reserved
 
 public:
     Reserved();
-    char p[TAM];
+    int p;
     short count;
     bool endOperations;
     bool isAnErrorMessage;

@@ -5,6 +5,7 @@ AdminJust::AdminJust()
     ,messageControl()
     ,semProcesses()
     ,individualJust()
+
 {
 
 }
@@ -31,30 +32,32 @@ int AdminJust::initSharedMem()
 }
 
 // Método que realiza el hijo para mostrar los resultados leidos desde la memoria compartida
-void AdminJust::printStadisticsFromFile( const char* alphchars, const short* wordsPerChar, const size_t amountOfLetters )
+void AdminJust::printStadisticsFromFile( const char* alphchars, const size_t amountOfLetters )
 {
     // se utiliza un indice secundario para mostrar en orden de letra las palbras que se encuentren en memoria
     // con forme se vayan teniendo
-    int subIndex = 0;
+    //int subIndex = 0;
     for ( size_t index = 0; index < amountOfLetters; ++ index )
     {
         // se espera a aque el proceso padre de el visto bueno para mostrar los valores
         this->semProcesses.Wait();
         std::cout<<"Palabras que empiezan con la letra: "<<alphchars [ index ]<< std::endl;
 
-        for ( int c = subIndex; c < (subIndex + wordsPerChar [ index ]); ++c )
+        //for ( int c = subIndex; c < (subIndex + wordsPerChar [ index ]); ++c )
+        for ( int c = 0; c < this->attachedSharedMem->nCurrentTotals; ++c )
         {
-            std::cout<<"Palabra: "<<this->attachedSharedMem->r[ c ].p<<std::endl;
+            std::cout<<"Palabra: "<<Stadistics::reservedWordsVector[ this->attachedSharedMem->r[ c ].p ]<<std::endl;
             std::cout<<"\tAparece "<<this->attachedSharedMem->r [ c ].count<<" veces."<<std::endl;
         }
         std::cout<<std::endl<<std::endl;
-        subIndex += wordsPerChar [ index ];
+        // regresa el control al padre para que siga sumando
+        this->semProcesses.Signal();
     }
     _exit(0);
 }
 
 // método que llena el vector en cada iteración con los mensajes que envían los procesos hijos
-void AdminJust::fillMessagesVector ( Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t &childIndex, size_t &recordAllWords,  int& numberOfFiles )
+void AdminJust::fillMessagesVector ( Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t &childIndex, int& numberOfFiles )
 {
     Reserved receivedMessage;
     // primero se llena el vector en donde van a acumularse los mensajes
@@ -62,25 +65,10 @@ void AdminJust::fillMessagesVector ( Reserved childMessages[][Stadistics::AMOUNT
     {
         messageControl.Receive( receivedMessage, childNumber+ 1 );
         childMessages[ childNumber +1 ] [ childIndex ] = receivedMessage;
-
-        // verificamos si ya algún hijo terminó
-        for ( int childFinish = 0; childFinish < numberOfFiles; ++ childFinish )
-        {
-            messageControl.Receive( receivedMessage, ENDTYPEOP , IPC_NOWAIT );
-
-            if ( receivedMessage.endOperations == true )
-            {
-                std::cout << receivedMessage.p <<std::endl;
-                receivedMessage.endOperations = false;
-            }
-        }
-    }
+    } 
 
     // se actualizan los indices de las sublistas. Ahora va por el siguiente
-    ++childIndex;
-
-    // se actualizan las palabras recorridas
-    ++recordAllWords;
+    ++childIndex;   
 }
 
 // método que se ejecuta una vez que estén todas las palabras de una letra
@@ -92,16 +80,12 @@ void AdminJust::updateSharedMemory(int & lastPointerToWords, Reserved childMessa
     // por cada palabra asociada a la letra contamos cuentas veces está por hijo
     for (int index = lastPointerToWords; index < (lastPointerToWords + wordsPerChar [ currentLetterIndex ]); ++index )
     {
-        // se limpia la cadena de caracteres de la estructura del mensaje y la
-        // varibale de conteo de la misma.
-        for (int clean = 0; clean < TAM; ++ clean)
-            receivedMessage.p[ clean ] = '\0';
 
         receivedMessage.count = 0;
 
-        // copio la palabra para enviarla
+        // copio el indice la palabra para enviarla de cualquier hijo
+        receivedMessage.p = childMessages[ 1 ] [index ].p;
 
-        strncpy( receivedMessage.p, childMessages [ 1 ] [ index ].p, strlen( childMessages [ 1 ] [ index ].p ) );
         // por cada hijo busco y sumo esa palabra
 
         for (int subindex = 0; subindex < numberOfFiles; ++ subindex )
@@ -115,9 +99,13 @@ void AdminJust::updateSharedMemory(int & lastPointerToWords, Reserved childMessa
     }
     // se indica que el hijo tiene derecho a imprimir
     this->semProcesses.Signal();
+    // espero a que el hijo me indique que puedo seguir
+    this->semProcesses.Wait();
     // cambiamos la posición en el vector
     lastPointerToWords += wordsPerChar[ currentLetterIndex ];
     ++currentLetterIndex;
+    // se reinicia el indice de la memoria compartida
+    this->attachedSharedMem->nCurrentTotals = 0;
 }
 
 int AdminJust::run(std::vector<std::string> listOfFiles, int numberOfFiles , size_t identationSize )
@@ -135,8 +123,7 @@ int AdminJust::run(std::vector<std::string> listOfFiles, int numberOfFiles , siz
     Reserved childMessages[ numberOfFiles+1 ][ Stadistics::AMOUNT_OF_WORDS ]; // vector que almacena los mensajes de cada tipo de hijo
     size_t amountOfChars = 20; // cantidad de letras del alfabeto
     size_t currentCharIndex = 0; //indica la letra actual del vector de letras que se está verificando
-    size_t childIndex = 0; // control de los indices para organizar la sublista de mensajes por hijo
-    size_t recordAllWords = 0; // verifica que solamente se recorran todas las palabras una vez
+    size_t childIndex = 0; // control de los indices para organizar la sublista de mensajes por hijo    
     int lastPointerToWords = 0; // guadar el orden por donde queda en cada subvector de mensajes de los hijos
 
     const char alphChars[ amountOfChars ] =
@@ -164,18 +151,15 @@ int AdminJust::run(std::vector<std::string> listOfFiles, int numberOfFiles , siz
 
         if (! printerChildId  )
         {
-            printStadisticsFromFile(  alphChars,  wordsPerChar, amountOfChars );
+            printStadisticsFromFile( alphChars, amountOfChars );
         }
         else
         {
             for ( int superIndex = 0; superIndex < Stadistics::AMOUNT_OF_WORDS; ++superIndex )
             {
-                // se controla que el recivir mensajes solo se de una vez por cada hijo
-                // y n veces por cada palabra
-                if (recordAllWords < Stadistics::AMOUNT_OF_WORDS )
-                {
-                    fillMessagesVector( childMessages,  childIndex, recordAllWords, numberOfFiles );
-                }
+
+                // recibo una palabra por hijo y voy llenando el vector de mensajes
+                fillMessagesVector( childMessages,  childIndex, numberOfFiles );
 
                 // se verifica si ya están todas la palabras de la letra actual para enviarlas a
                 // imprimir mediante el hijo que esta esperando
@@ -186,14 +170,6 @@ int AdminJust::run(std::vector<std::string> listOfFiles, int numberOfFiles , siz
                 }
             }
         }
-
-        // esperamos a que el hijo que imprime termine su ejecución
-        int x;
-        waitpid( printerChildId, &x , 0 );
-
-        for (int x = 0; x < numberOfFiles; ++x)
-            wait(&x);
-
         // finalmente solo el papá libera la memoria compartida.
         shmdt( this->attachedSharedMem ) ;
         shmctl( this->idSharedMem, IPC_RMID, NULL );

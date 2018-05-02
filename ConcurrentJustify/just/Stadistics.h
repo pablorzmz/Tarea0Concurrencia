@@ -15,9 +15,10 @@
 
 class Stadistics
 {        
-public:
     std::map<std::string,short> finder;
+ public:
     const static short AMOUNT_OF_WORDS = 86;
+    static const std::string reservedWordsVector[ Stadistics::AMOUNT_OF_WORDS ];
 
     Stadistics();
     ~Stadistics();

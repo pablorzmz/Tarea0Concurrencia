@@ -1,20 +1,7 @@
 #include "Stadistics.h"
 
-Stadistics::Stadistics()
-    :finder()
-{
-    this->fillWords();
-}
 
-Stadistics::~Stadistics()
-{
-
-}
-
-void Stadistics::fillWords()
-{
-    std::string reservedWordsVector[] =
-    {
+const std::string Stadistics::reservedWordsVector[ Stadistics::AMOUNT_OF_WORDS ] = {
         "alignas",
         "alignof",
         "and",
@@ -103,9 +90,24 @@ void Stadistics::fillWords()
         "xor_eq",
     };
 
+Stadistics::Stadistics()
+    :finder()    
+
+{
+    this->fillWords();
+}
+
+Stadistics::~Stadistics()
+{    
+}
+
+
+void Stadistics::fillWords()
+{
+
     for (size_t index = 0; index <  AMOUNT_OF_WORDS; ++index )
     {
-        finder.insert(std::pair<std::string,int>(reservedWordsVector[index],0) );
+        finder.insert(std::pair<std::string,int>( reservedWordsVector[index],0) );
     }
 
 }
@@ -157,20 +159,12 @@ void Stadistics::generateStadistics(  Buzon & buz, const long& typeX, const std:
     }
 
     // se envian los mensajes por cada palabra
-//    int currentPos = 0;
+    int index = 0;
     for ( std::map<std::string,short>::iterator iter = finder.begin(); iter != finder.end(); ++iter )
     {
-        strncpy( localMessage.p, iter->first.c_str(),TAM);
+        localMessage.p = index;
         localMessage.count = iter-> second;
         buz.Send( localMessage, typeX );
+        ++index;
     }
-
-    // se notifica por mensaje cuando ya terminé de ejecutarme
-
-       std::string result = "Succefull_FinishedChild: " + std::to_string( typeX );
-       strcpy ( localMessage.p, result.c_str() ) ;
-       localMessage.count = -1;
-       localMessage.endOperations = true;
-
-       buz.Send( localMessage, ENDTYPEOP );
 }

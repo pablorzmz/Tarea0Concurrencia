@@ -53,8 +53,8 @@ int Buzon::Receive(Reserved &content, int tipo, int flag)
 
      if ( -1 == result )
      {
-//         perror("No se pudo recibir algún mensaje");
-//         _exit(1);
+         perror("No se pudo recibir algún mensaje");
+         _exit(1);
      }
      else
      {
