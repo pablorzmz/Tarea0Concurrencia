@@ -14,7 +14,7 @@ Buzon::Buzon()
 Buzon::~Buzon()
 {
     // se ejecuta la llamada del sistema para que cuando se destruya el buzón,
-    // se librere el buzón otrogado
+    // se librere el buzón otrogado    
     int result = msgctl( id, IPC_RMID, NULL);
     if ( -1== result )
     {

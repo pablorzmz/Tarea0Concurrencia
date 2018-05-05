@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.6.0, 2018-05-02T17:00:58. -->
+<!-- Written by QtCreator 4.6.0, 2018-05-04T20:09:43. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">just2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/ubuntolab/Desktop/NuevoTarea2/Tarea0Concurrencia/ConcurrentJustify/just/just.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">-e 0 solution1.cpp solution3.cpp solution2.cpp</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--help</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">just.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
