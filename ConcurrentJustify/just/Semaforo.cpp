@@ -1,6 +1,6 @@
 #include "Semaforo.h"
 
-Semaforo::Semaforo(int ValorInicial)
+Semaforo::Semaforo(int ValorInicial, int KEY2)
     :id(0)
 {
     // se guarda el id del semaforo

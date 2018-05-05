@@ -3,7 +3,8 @@
 AdminJust::AdminJust()
     :idSharedMem(1)
     ,messageControl()
-    ,semProcesses()
+    ,semProcessesChild(0, 0xA12345)
+    ,semProcessesFather(0, 0xA12346)
     ,individualJust()
 
 {
@@ -40,7 +41,7 @@ void AdminJust::printStadisticsFromFile( const char* alphchars, const size_t amo
     for ( size_t index = 0; index < amountOfLetters; ++ index )
     {
         // se espera a aque el proceso padre de el visto bueno para mostrar los valores
-        this->semProcesses.Wait();
+        this->semProcessesChild.Wait();
         std::cout<<"Palabras que empiezan con la letra: "<<alphchars [ index ]<< std::endl;
 
         //for ( int c = subIndex; c < (subIndex + wordsPerChar [ index ]); ++c )
@@ -51,7 +52,7 @@ void AdminJust::printStadisticsFromFile( const char* alphchars, const size_t amo
         }
         std::cout<<std::endl<<std::endl;
         // regresa el control al padre para que siga sumando
-        this->semProcesses.Signal();
+        this->semProcessesFather.Signal();
     }
     _exit(0);
 }
@@ -98,9 +99,9 @@ void AdminJust::updateSharedMemory(int & lastPointerToWords, Reserved childMessa
         ++this->attachedSharedMem->nCurrentTotals;
     }
     // se indica que el hijo tiene derecho a imprimir
-    this->semProcesses.Signal();
+    this->semProcessesChild.Signal();
     // espero a que el hijo me indique que puedo seguir
-    this->semProcesses.Wait();
+    this->semProcessesFather.Wait();
     // cambiamos la posición en el vector
     lastPointerToWords += wordsPerChar[ currentLetterIndex ];
     ++currentLetterIndex;

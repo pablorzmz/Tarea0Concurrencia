@@ -35,7 +35,8 @@ public:
 
 private:
     Buzon messageControl;
-    Semaforo semProcesses;    
+    Semaforo semProcessesChild;
+    Semaforo semProcessesFather;
     sharedMemStruct* attachedSharedMem;
     Justify individualJust;
     int initSharedMem();
