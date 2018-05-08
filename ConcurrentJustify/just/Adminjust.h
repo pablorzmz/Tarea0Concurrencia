@@ -41,7 +41,7 @@ private:
     Justify individualJust;
     int initSharedMem();
     void printStadisticsFromFile(const char* alphchars, const size_t amountOfLetters );
-    void fillMessagesVector(Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t& childIndex,  int& numberOfFiles );
+    void fillMessagesVector(Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t& childIndex,  int& numberOfFiles);
     void updateSharedMemory(int & lastPointerToWords, Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], const short wordsPerChar[], size_t & currentLetterIndex, const  int& numberOfFiles);
 
 };

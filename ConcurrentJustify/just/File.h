@@ -11,7 +11,7 @@ class File
 {
 public:
     File();
-    void readFile (std::vector<std::string>& lines, const std::string& filenaName );
+    int readFile (std::vector<std::string>& lines, const std::string& filenaName );
     void writeFile (const  std::vector<std::string>& lines, const std::string &newFileName, const std::string &extention = "");
     static bool fileExists(const std::string& fileName);
 };

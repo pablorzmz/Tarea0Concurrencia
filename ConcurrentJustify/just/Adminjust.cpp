@@ -58,18 +58,21 @@ void AdminJust::printStadisticsFromFile( const char* alphchars, const size_t amo
 }
 
 // método que llena el vector en cada iteración con los mensajes que envían los procesos hijos
-void AdminJust::fillMessagesVector ( Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t &childIndex, int& numberOfFiles )
+void AdminJust::fillMessagesVector (Reserved childMessages[][Stadistics::AMOUNT_OF_WORDS], size_t &childIndex, int& numberOfFiles )
 {
     Reserved receivedMessage;
+
     // primero se llena el vector en donde van a acumularse los mensajes
     for ( int childNumber = 0; childNumber < numberOfFiles; ++ childNumber )
     {
+
         messageControl.Receive( receivedMessage, childNumber+ 1 );
         childMessages[ childNumber +1 ] [ childIndex ] = receivedMessage;
-    } 
+
+    }
 
     // se actualizan los indices de las sublistas. Ahora va por el siguiente
-    ++childIndex;   
+    ++childIndex;
 }
 
 // método que se ejecuta una vez que estén todas las palabras de una letra
@@ -111,69 +114,81 @@ void AdminJust::updateSharedMemory(int & lastPointerToWords, Reserved childMessa
 
 int AdminJust::run(std::vector<std::string> listOfFiles, int numberOfFiles , size_t identationSize )
 {
-    for ( int index = 0; index < numberOfFiles; ++ index )
+    int copyNumberOfFiles = numberOfFiles;
+    for ( int index = 0; index < copyNumberOfFiles; ++ index )
     {
-        if ( !fork() )
+        if ( File::fileExists(listOfFiles [index ] ) )
         {
-            this->individualJust.run( index + 1, messageControl, listOfFiles [ index ], listOfFiles [ index ] , identationSize );
-            _exit(0);
+            if ( !fork() )
+            {
+                this->individualJust.run( index + 1, messageControl, listOfFiles [ index ], listOfFiles [ index ] ,identationSize);
+                _exit(0);
+            }
+        }else
+        {
+            std::cerr<<"El archivo "<<listOfFiles [ index ] <<" no existe, por lo que no se procesó\n";
+            --numberOfFiles;
         }
     }
-
-    // se leen los mensajes enviados por cada hijo
-    Reserved childMessages[ numberOfFiles+1 ][ Stadistics::AMOUNT_OF_WORDS ]; // vector que almacena los mensajes de cada tipo de hijo
-    size_t amountOfChars = 20; // cantidad de letras del alfabeto
-    size_t currentCharIndex = 0; //indica la letra actual del vector de letras que se está verificando
-    size_t childIndex = 0; // control de los indices para organizar la sublista de mensajes por hijo    
-    int lastPointerToWords = 0; // guadar el orden por donde queda en cada subvector de mensajes de los hijos
-
-    const char alphChars[ amountOfChars ] =
+    // si hay archivos con qué trabajar
+    if ( numberOfFiles > 0 )
     {
-        'a','b','c','d','e','f','g','i','l','m','n','o','p','r','s','t','u','v','w','x'
-    };
+        // se leen los mensajes enviados por cada hijo
+        Reserved childMessages[ numberOfFiles+1 ][ Stadistics::AMOUNT_OF_WORDS ]; // vector que almacena los mensajes de cada tipo de hijo
+        size_t amountOfChars = 20; // cantidad de letras del alfabeto
+        size_t currentCharIndex = 0; //indica la letra actual del vector de letras que se está verificando
+        size_t childIndex = 0; // control de los indices para organizar la sublista de mensajes por hijo
+        int lastPointerToWords = 0; // guadar el orden por donde queda en cada subvector de mensajes de los hijos
 
-    const short wordsPerChar[ amountOfChars ] =
-    {
-        /*a*/6, /*b*/4, /*c*/11, /*d*/6, /*e*/5, /*f*/4, /*g*/1, /*i*/3, /*l*/1, /*m*/1, /*n*/6, /*o**/3, /*p*/3, /*r*/3, /*s*/10, /*t*/ 9, /*u*/3, /*v*/3, /*w*/2, /*x*/2
-    };
-
-    // se inicia la memoria compartida
-    int isValidSH= this->initSharedMem();
-
-    if ( -1 == isValidSH )
-    {
-        perror( "ADMINJUST::No se pudo enlazar la memoria compartida");
-    }
-    else
-    {
-        // necesitamos tener el id del hijo que imprime para esperarlo por si tarda más en
-        // imprimir las palabras
-        int printerChildId = fork();
-
-        if (! printerChildId  )
+        const char alphChars[ amountOfChars ] =
         {
-            printStadisticsFromFile( alphChars, amountOfChars );
+            'a','b','c','d','e','f','g','i','l','m','n','o','p','r','s','t','u','v','w','x'
+        };
+
+        const short wordsPerChar[ amountOfChars ] =
+        {
+            /*a*/6, /*b*/4, /*c*/11, /*d*/6, /*e*/5, /*f*/4, /*g*/1, /*i*/3, /*l*/1, /*m*/1, /*n*/6, /*o**/3, /*p*/3, /*r*/3, /*s*/10, /*t*/ 9, /*u*/3, /*v*/3, /*w*/2, /*x*/2
+        };
+
+        // se inicia la memoria compartida
+        int isValidSH= this->initSharedMem();
+
+        if ( -1 == isValidSH )
+        {
+            perror( "ADMINJUST::No se pudo enlazar la memoria compartida");
         }
         else
         {
-            for ( int superIndex = 0; superIndex < Stadistics::AMOUNT_OF_WORDS; ++superIndex )
+            // necesitamos tener el id del hijo que imprime para esperarlo por si tarda más en
+            // imprimir las palabras
+            int printerChildId = fork();
+
+            if (! printerChildId  )
             {
-
-                // recibo una palabra por hijo y voy llenando el vector de mensajes
-                fillMessagesVector( childMessages,  childIndex, numberOfFiles );
-
-                // se verifica si ya están todas la palabras de la letra actual para enviarlas a
-                // imprimir mediante el hijo que esta esperando
-                int signalCounterValue = wordsPerChar [ currentCharIndex ] + lastPointerToWords  - 1 ;
-                if ( superIndex == signalCounterValue )
+                printStadisticsFromFile( alphChars, amountOfChars );
+            }
+            else
+            {
+                for ( int superIndex = 0; superIndex < Stadistics::AMOUNT_OF_WORDS; ++superIndex )
                 {
-                    updateSharedMemory( lastPointerToWords, childMessages,  wordsPerChar,  currentCharIndex , numberOfFiles);
+
+                    // recibo una palabra por hijo y voy llenando el vector de mensajes
+                    fillMessagesVector( childMessages,  childIndex, numberOfFiles );
+
+                    // se verifica si ya están todas la palabras de la letra actual para enviarlas a
+                    // imprimir mediante el hijo que esta esperando
+                    int signalCounterValue = wordsPerChar [ currentCharIndex ] + lastPointerToWords  - 1 ;
+                    if ( superIndex == signalCounterValue )
+                    {
+                        updateSharedMemory( lastPointerToWords, childMessages,  wordsPerChar,  currentCharIndex , numberOfFiles );
+                    }
                 }
             }
+            // finalmente solo el papá libera la memoria compartida.
+            shmdt( this->attachedSharedMem ) ;
+            shmctl( this->idSharedMem, IPC_RMID, NULL );
         }
-        // finalmente solo el papá libera la memoria compartida.
-        shmdt( this->attachedSharedMem ) ;
-        shmctl( this->idSharedMem, IPC_RMID, NULL );
     }
+
     return 0;
 }

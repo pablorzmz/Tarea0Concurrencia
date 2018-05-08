@@ -8,7 +8,7 @@ File::File()
 // método que realiza la lectura de todo el contenido de un archivo dado. Cada línea, hasta el final del archivo
 // se inserta en un vector de strings dado para luego ser procesado.
 
-void File::readFile( std::vector<std::string> &lines, const std::string &filenaName)
+int File::readFile( std::vector<std::string> &lines, const std::string &filenaName)
 {
     std::string readLine;
     std::ifstream codeFile;
@@ -34,9 +34,10 @@ void File::readFile( std::vector<std::string> &lines, const std::string &filenaN
         }else // en caso de no poder abrir, se notifica y finaliza la ejecución.
         {
             std::cerr<<"No se pudo abrir el archivo: "<<filenaName<<std::endl;
-            exit(1);
+            return -1;
         }
     }
+    return 0;
 }
 
 // método genérico para escibir los string del vector en un archivo válido dado por el argumento newFileName

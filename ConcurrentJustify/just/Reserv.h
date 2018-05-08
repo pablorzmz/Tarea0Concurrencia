@@ -10,9 +10,7 @@ class Reserved
 public:
     Reserved();
     int p;
-    short count;
-    bool endOperations;
-    bool isAnErrorMessage;
+    short count; 
 };
 
 #endif // RESERV_H

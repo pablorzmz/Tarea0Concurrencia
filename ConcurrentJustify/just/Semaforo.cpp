@@ -84,7 +84,7 @@ Semaforo::~Semaforo()
         _exit(0);
     }else
     {
-        std::cout<<"SEMAFORO::Me muero: "<<id<<std::endl;
+        std::cout<<"SEMAFORO::Semaforo destruido satisfactoriamente"<<std::endl;
 
     }
 }

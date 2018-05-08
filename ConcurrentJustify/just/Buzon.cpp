@@ -6,7 +6,7 @@ Buzon::Buzon()
     if ( -1 == id ) // si no hubo un error, la ejecución continúa normalmente
     {
         perror( "Error a la hora de contruir el buzón" );
-        _exit ( 1 );
+        exit ( 1 );
     }
 }
 
@@ -22,7 +22,7 @@ Buzon::~Buzon()
         _exit(0); // sólo un proceso asociado al buzón lo destruye
     }else
     {
-        std::cout<<"BUZON:: Buzón destruido"<<std::endl;
+        std::cout<<"BUZON:: Buzón destruido satisfactoriamente"<<std::endl;
     }
 }
 
@@ -36,7 +36,7 @@ int Buzon::Send( Reserved content, int tipo )
     if ( -1 == result ) // si hubo error al envío, se finaliza la ejecución.
     {
         perror("Error al enviar el mensaje");
-        _exit(1);
+        exit( 1 );
     }
     else
     {
@@ -51,10 +51,10 @@ int Buzon::Receive(Reserved &content, int tipo, int flag)
 
      int result = msgrcv( id, (void*) &mensajeRecibido, sizeof ( mensajeRecibido ), tipo , flag); // se espera recibir el mensaje de prioridad 1
 
-     if ( -1 == result )
+     if ( -1 == result  && flag != IPC_NOWAIT )
      {
          perror("No se pudo recibir algún mensaje");
-         _exit(1);
+         exit( 1 );
      }
      else
      {

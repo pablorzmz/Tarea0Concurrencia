@@ -16,25 +16,29 @@ Justify::~Justify()
 
 }
 
-int Justify::run(const long& typeX ,Buzon& buz, const std::string &codeFileName, const std::string &justifiedFileName , const int &identation)
+int Justify::run(const long& typeX , Buzon &buz, const std::string &codeFileName, const std::string &justifiedFileName , const int &identation )
 {    
     // se establece la identación según la indicada por el argumento
     this->identationSize = identation;
     // se leer del archivo existente, el código a identar
-    codeFile.readFile( this->readLinesFromFile, codeFileName );
-    // primero se realiza la separación de la instrucciones por el caracter ;
-    this->expand( ';',true );
-    // seguidamente, se realiza lo mismo con las llaves { } que corresponden a los bloques
-    this->expand( OPENED_KEY );
-    this->expand( CLOSED_KEY );
-    // finalmente, antes de identar, se eliminan los espacios y tabuladores al principio de cada línea
-    this->trimBegin( this->readLinesFromFile );
-    // por último, se realiza la identación
-    this->ident();
-    // antes de finalizar se contruyen la estadisticas de la frecuencia de la palabras reservadas
-    st.generateStadistics( buz, typeX, this->readLinesFromFile );
-    // finalmente, se crear o reemplaza el nuevo archivo.
-    codeFile.writeFile( this->readLinesFromFile, justifiedFileName, EXTENTION );
+    int result = codeFile.readFile( this->readLinesFromFile, codeFileName );
+    if ( -1 != result )
+    {
+        // primero se realiza la separación de la instrucciones por el caracter ;
+        this->expand( ';',true );
+        // seguidamente, se realiza lo mismo con las llaves { } que corresponden a los bloques
+        this->expand( OPENED_KEY );
+        this->expand( CLOSED_KEY );
+        // finalmente, antes de identar, se eliminan los espacios y tabuladores al principio de cada línea
+        this->trimBegin( this->readLinesFromFile );
+        // por último, se realiza la identación
+        this->ident();
+        // antes de finalizar se contruyen la estadisticas de la frecuencia de la palabras reservadas
+        st.generateStadistics( buz, typeX, this->readLinesFromFile );
+        // finalmente, se crear o reemplaza el nuevo archivo.
+        codeFile.writeFile( this->readLinesFromFile, justifiedFileName, EXTENTION );
+    }
+
     return 0;
 }
 
